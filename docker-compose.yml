@@ -1,0 +1,15 @@
+services:
+  bug-agent:
+    build:
+      context: .
+      args:
+        PYTHON_IMAGE: ${PYTHON_IMAGE:-python:3.12-slim}
+        PIP_INDEX_URL: ${PIP_INDEX_URL:-}
+    image: bug-agent:latest
+    container_name: bug-agent
+    env_file:
+      - .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    command: ["python", "dingtalk_stream_worker.py"]
