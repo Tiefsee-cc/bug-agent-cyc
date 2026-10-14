@@ -1,2 +1,49 @@
-# bug-agent-cyc
-TAPD Bug Service：用于接入钉钉机器人等自然语言入口，提取并提交 TAPD Bug 和 GitLab Issue。
+# TAPD Bug Service
+
+一个本地 Flask API 服务，用于接入钉钉机器人等自然语言入口：用户直接发送问题地址、账号密码、问题现象和截图，服务先提取 TAPD 缺陷单草稿，人工确认后再提交创建 TAPD Bug。
+
+## 能力
+
+- `GET /health`：健康检查。
+- `POST /api/robot/bug-intake`：机器人消息入口，自然语言 + 图片 → 缺陷表单草稿，不写入 TAPD。
+- `POST /api/robot/bug-confirm`：确认某个草稿后提交 TAPD。
+- `POST /api/tapd/bug-drafts`：底层草稿提取接口。
+- `POST /api/tapd/bugs`：底层 TAPD 创建接口。
+- `POST /api/robot/gitlab-issue-intake`：机器人消息入口，自然语言 → GitLab Issue 草稿。
+- `POST /api/robot/gitlab-issue-confirm`：确认某个草稿后提交 GitLab Issue。
+- `POST /api/gitlab/issues`：底层 GitLab Issue 创建接口。
+
+## 配置
+
+服务会读取当前目录 `.env`，也会读取上级目录 `.env`。常用配置：
+
+```text
+TAPD_BASE_URL=https://api.tapd.cn
+TAPD_API_USER=...
+TAPD_API_PASSWORD=...
+TAPD_API_NICK=...
+TAPD_WORKSPACE_DISCOVERY_WORKSPACE_ID=56753313
+TAPD_DEFAULT_ITERATION_ID=
+TAPD_DEFAULT_ITERATION_NAME=
+TAPD_FIELD_ENVIRONMENT=custom_field_two
+TAPD_FIELD_HISTORY_BUG=custom_field_five
+TAPD_FIELD_RELEASE_NOTE=custom_field_6
+TAPD_BUG_DEFAULT_SOURCE=代码问题
+OPENAI_BASE_URL=...
+OPENAI_API_KEY=...
+OPENAI_MODEL=...
+GITLAB_BASE_URL=https://gitlab.com
+GITLAB_TOKEN=...
+GITLAB_PROJECT_ID=group/project 或项目数字 ID
+GITLAB_DEFAULT_LABELS=Status:New,Type:Bug
+DINGTALK_APP_KEY=...
+DINGTALK_TAPD_ROBOT_CODE=...
+DINGTALK_TAPD_ROBOT_SECRET=...
+DINGTALK_GITLAB_ROBOT_CODE=...
+DINGTALK_GITLAB_ROBOT_SECRET=...
+DINGTALK_BUG_CARD_TEMPLATE_ID=...
+DINGTALK_GITLAB_ISSUE_CARD_TEMPLATE_ID=...
+DINGTALK_CALLBACK_TOKEN=...
+APP_HOST=0.0.0.0
+APP_PORT=8765
+```
